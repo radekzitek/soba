@@ -1,120 +1,90 @@
-Frontend
-========
-## 1. Vue 3
-## 2. Vuetify
-## 3. Vue Router
-## 4. Pinia
-## 5. Axios
-## 6. Vite
+# System Debug Dashboard
 
-Directory Structure
--------------------
-frontend/
-- public/
-- src/
-    - assets/
-    - components/
-    - views/
-    - App.vue
-    - main.js
-- package.json
-
-
-Backend
-=======
-FastAPI-based backend providing user management and authentication services.
+A full-stack application for system monitoring and debugging, built with FastAPI and Vue.js.
 
 ## Features
-- RESTful API with FastAPI
+- Real-time system information monitoring
+- Database connection status
+- Environment configuration display
+- Logging system overview
+- Version tracking
+- Health checks
+
+## Technology Stack
+### Backend
+- FastAPI for REST API
 - Async PostgreSQL with SQLAlchemy
 - JWT Authentication
-- Password hashing with bcrypt
-- Comprehensive logging
-- Health and debug endpoints
+- Comprehensive logging system
 - Environment-based configuration
+
+### Frontend
+- Vue 3 with Composition API
+- TypeScript for type safety
+- Vuetify 3 for UI components
+- Pinia for state management
+- Axios for API communication
+- Vite for development and building
 
 ## Directory Structure
 ```
-backend/
-├── app/
-│   ├── __init__.py
-│   ├── main.py              # FastAPI application and endpoints
-│   ├── database.py          # Database connection management
-│   ├── models/             
-│   │   ├── __init__.py
-│   │   └── user.py         # SQLAlchemy models
-│   ├── schemas/
-│   │   ├── __init__.py
-│   │   ├── user.py         # Pydantic models for user operations
-│   │   └── debug.py        # Pydantic models for system info
-│   ├── crud/
-│   │   ├── __init__.py
-│   │   └── user.py         # Database operations
-│   ├── core/
-│   │   ├── __init__.py
-│   │   ├── config.py       # Application configuration
-│   │   ├── security.py     # Authentication utilities
-│   │   ├── deps.py         # Dependencies and middleware
-│   │   └── logging_config.py # Logging configuration
-│   └── tests/
-│       ├── __init__.py
-│       └── test_db.py      # Database tests
-├── logs/                    # Application logs directory
-├── requirements.txt         # Python dependencies
-└── run.py                  # Application runner
+├── backend/
+│   ├── app/
+│   │   ├── core/
+│   │   │   ├── config.py       # Application configuration
+│   │   │   ├── security.py     # Authentication utilities
+│   │   │   └── logging_config.py # Logging setup
+│   │   ├── models/            
+│   │   ├── schemas/
+│   │   └── crud/
+│   ├── logs/                   # Application logs
+│   └── requirements.txt
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── system/        # System info components
+│   │   │   └── SystemDebug.vue
+│   │   ├── stores/
+│   │   │   └── system.ts      # Pinia store
+│   │   ├── types/
+│   │   │   └── system.ts      # TypeScript interfaces
+│   │   └── config/
+│   │       └── index.ts       # Frontend configuration
+│   └── package.json
 ```
 
 ## Configuration
-The application is configured through environment variables, which can be set in a `.env` file:
 
+### Backend (.env)
 ```ini
 # Version
-VERSION=0.1.0                # Application version
+VERSION=0.1.0
 
 # Database settings
-DATABASE_USER=user           # PostgreSQL username
-DATABASE_PASSWORD=pass       # PostgreSQL password
-DATABASE_HOST=localhost      # Database host
-DATABASE_PORT=5432          # Database port
-DATABASE_NAME=dbname        # Database name
+DATABASE_USER=user
+DATABASE_PASSWORD=pass
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+DATABASE_NAME=dbname
 
 # Security settings
-SECRET_KEY=your-secret-key  # JWT signing key
-ACCESS_TOKEN_EXPIRE_MINUTES=60  # JWT token expiration time
+SECRET_KEY=your-secret-key
+ACCESS_TOKEN_EXPIRE_MINUTES=60
 
 # Environment settings
-ENVIRONMENT=development     # development/staging/production
+ENVIRONMENT=development
 ```
 
-All configuration values are required - the application will fail to start if any are missing.
-
-## Logging
-The application uses a comprehensive logging system:
-- All logs are written to `logs/app.log`
-- Log files are rotated at 1MB size
-- Keeps 5 backup files
-- Logs include:
-  - Database operations
-  - Authentication attempts
-  - API requests
-  - System events
-  - Health checks
-
-## API Documentation
-- Swagger UI: `/docs`
-- ReDoc: `/redoc`
-
-## System Endpoints
-- `/health` - Basic health check
-- `/debug/system` - Detailed system information including:
-  - Version information
-  - Database status
-  - Environment details
-  - Logging configuration
-  - CORS settings
+### Frontend (.env)
+```ini
+VITE_API_BASE_URL=/api
+```
 
 ## Setup and Running
-1. Create and activate virtual environment:
+
+### Backend
+1. Create Python virtual environment:
 ```bash
 python -m venv .venv
 source .venv/bin/activate  # Linux/Mac
@@ -133,5 +103,63 @@ pip install -r requirements.txt
 python run.py
 ```
 
-The server will start at `http://localhost:8000`
+### Frontend
+1. Install dependencies:
+```bash
+cd frontend
+npm install
+```
+
+2. Run development server:
+```bash
+npm run dev
+```
+
+3. Build for production:
+```bash
+npm run build
+```
+
+## API Documentation
+- Swagger UI: `http://localhost:8000/docs`
+- ReDoc: `http://localhost:8000/redoc`
+
+## System Endpoints
+- `/health` - Basic health check
+- `/debug/system` - Detailed system information
+
+## Development
+
+### Backend
+- Uses FastAPI's async features
+- Comprehensive logging with rotation
+- Environment-based configuration
+- Type checking with Pydantic
+
+### Frontend
+- TypeScript for type safety
+- Component-based architecture
+- Centralized state management
+- Proxy configuration for API calls
+- Environment configuration
+
+## Logging
+All backend logs are written to `logs/app.log` with:
+- Automatic rotation at 1MB
+- Keeps 5 backup files
+- Comprehensive logging of:
+  - Database operations
+  - API requests
+  - System events
+  - Health checks
+
+## Contributing
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## Version History
+See [CHANGELOG.md](CHANGELOG.md) for version history.
 

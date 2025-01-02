@@ -1,0 +1,36 @@
+<template>
+  <v-expansion-panel>
+    <v-expansion-panel-title>Database</v-expansion-panel-title>
+    <v-expansion-panel-text>
+      <v-list>
+        <v-list-item v-for="(value, key) in database" :key="key">
+          <v-list-item-title>{{ formatKey(key) }}</v-list-item-title>
+          <v-list-item-subtitle>
+            <v-chip
+              v-if="key === 'connected'"
+              :color="value ? 'success' : 'error'"
+              size="small"
+            >
+              {{ value ? 'Connected' : 'Disconnected' }}
+            </v-chip>
+            <span v-else>{{ value }}</span>
+          </v-list-item-subtitle>
+        </v-list-item>
+      </v-list>
+    </v-expansion-panel-text>
+  </v-expansion-panel>
+</template>
+
+<script setup lang="ts">
+import type { DatabaseInfo } from '@/types/system'
+
+defineProps<{
+  database: DatabaseInfo
+}>()
+
+const formatKey = (key: string): string => {
+  return key.split('_').map(word => 
+    word.charAt(0).toUpperCase() + word.slice(1)
+  ).join(' ')
+}
+</script> 
