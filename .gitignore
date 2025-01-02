@@ -111,4 +111,8 @@ config.dev.js
 
 # Test coverage
 coverage/
-.nyc_output/ 
+.nyc_output/
+
+# Logs
+logs/
+*.log 

@@ -9,7 +9,11 @@ from . import crud
 from .models import user as models
 from .schemas.user import User, UserCreate, UserUpdate, PasswordChange, Token
 from .database import engine, get_db, Base
-from .core.security import create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
+from .core.security import create_access_token
+from .core.config import get_settings
+from .core.logging_config import setup_logging
+
+settings = get_settings()
 
 app = FastAPI(title="User Management API")
 
@@ -23,6 +27,9 @@ app.add_middleware(
 )
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+# Setup logging before creating FastAPI app
+setup_logging()
 
 @app.on_event("startup")
 async def init_db():
@@ -41,7 +48,7 @@ async def login(
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user.user_login}, 
         expires_delta=access_token_expires
