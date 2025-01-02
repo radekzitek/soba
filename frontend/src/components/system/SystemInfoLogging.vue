@@ -12,14 +12,15 @@
   </v-expansion-panel>
 </template>
 
-<script setup lang="ts">
-import type { LoggingConfig } from '@/types/system'
+<script setup>
+defineProps({
+  config: {
+    type: Object,
+    required: true
+  }
+})
 
-defineProps<{
-  config: LoggingConfig
-}>()
-
-const formatKey = (key: string): string => {
+const formatKey = (key) => {
   return key.split('_').map(word => 
     word.charAt(0).toUpperCase() + word.slice(1)
   ).join(' ')

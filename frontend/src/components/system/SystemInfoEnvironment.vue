@@ -9,12 +9,15 @@
   </v-expansion-panel>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { computed } from 'vue'
 
-const props = defineProps<{
-  environment: string
-}>()
+const props = defineProps({
+  environment: {
+    type: String,
+    required: true
+  }
+})
 
 const getEnvironmentColor = computed(() => {
   switch (props.environment) {

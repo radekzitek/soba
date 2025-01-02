@@ -39,13 +39,13 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
 
 def verify_token(token: str) -> Optional[str]:
     """
-    Verifies a JWT token and returns the username.
+    Verifies a JWT token and returns the user ID.
     
     Args:
         token: JWT token to verify
     
     Returns:
-        Username from token if valid, None otherwise
+        User ID from token if valid, None otherwise
     """
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])

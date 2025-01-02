@@ -12,14 +12,15 @@
   </v-expansion-panel>
 </template>
 
-<script setup lang="ts">
-import type { VersionInfo } from '@/types/system'
+<script setup>
+defineProps({
+  versions: {
+    type: Object,
+    required: true
+  }
+})
 
-defineProps<{
-  versions: VersionInfo
-}>()
-
-const formatKey = (key: string): string => {
+const formatKey = (key) => {
   return key.split('_').map(word => 
     word.charAt(0).toUpperCase() + word.slice(1)
   ).join(' ')

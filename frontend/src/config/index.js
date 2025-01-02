@@ -4,7 +4,7 @@
  */
 export const config = {
   app: {
-    name: import.meta.env.VITE_APP_NAME || 'System Debug Dashboard',
+    name: import.meta.env.VITE_APP_NAME || 'Soba',
     version: import.meta.env.VITE_APP_VERSION || '0.1.1',
     environment: import.meta.env.VITE_APP_ENV || 'development'
   },
