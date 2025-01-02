@@ -29,15 +29,42 @@ Backend
 
 Directory Structure
 -------------------
+# Project Name
+
+## Backend Directory Structure
+
+```
 backend/
-- sql/
-- app/
-    - __init__.py
-    - models.py
-    - schemas.py
-    - crud.py
-    - main.py
-- requirements.txt
+├── app/
+│   ├── __init__.py
+│   ├── main.py              # FastAPI application instance and endpoints
+│   ├── database.py          # Database connection and session management
+│   ├── models/             
+│   │   ├── __init__.py
+│   │   └── user.py         # SQLAlchemy models
+│   ├── schemas/
+│   │   ├── __init__.py
+│   │   └── user.py         # Pydantic models for request/response
+│   ├── crud/
+│   │   ├── __init__.py
+│   │   └── user.py         # CRUD operations
+│   ├── core/
+│   │   ├── __init__.py
+│   │   ├── security.py     # Authentication and security utilities
+│   │   └── deps.py         # Dependencies and middleware
+│   └── tests/
+│       ├── __init__.py
+│       └── test_db.py      # Database connection tests
+└── requirements.txt         # Python dependencies
+```
+
+## Features
+- FastAPI REST API
+- Async PostgreSQL with SQLAlchemy
+- JWT Authentication
+- Password hashing
+- User management (CRUD operations)
+- OpenAPI documentation (Swagger UI)
 
 Python setup
 ------------
