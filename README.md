@@ -10,14 +10,14 @@ Frontend
 Directory Structure
 -------------------
 frontend/
-├── public/
-├── src/
-│   ├── assets/
-│   ├── components/
-│   ├── views/
-│   ├── App.vue
-│   ├── main.js
-├── package.json
+- public/
+- src/
+    - assets/
+    - components/
+    - views/
+    - App.vue
+    - main.js
+- package.json
 
 
 Backend
@@ -30,23 +30,19 @@ Backend
 Directory Structure
 -------------------
 backend/
-├── sql/
-├── app/
-│   ├── __init__.py
-│   ├── models.py
-│   ├── schemas.py
-│   ├── crud.py
-│   ├── main.py
-├── requirements.txt
+- sql/
+- app/
+    - __init__.py
+    - models.py
+    - schemas.py
+    - crud.py
+    - main.py
+- requirements.txt
 
 Python setup
 ------------
-python -m venv venv
-source venv/bin/activate
+python -m venv .venv
+source .venv/bin/activate
 python -m pip install --upgrade pip
 pip install -r requirements.txt
 
-Psycopg2 setup (unsuccesfull)
---------------
-
-code-select --install
