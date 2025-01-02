@@ -1,13 +1,15 @@
-# System Debug Dashboard
+# Soba - System Debug Dashboard
 
 A full-stack application for system monitoring and debugging, built with FastAPI and Vue.js.
 
 ## Features
-- Real-time system information monitoring
-- Database connection status
+- Real-time system monitoring
+- User authentication and registration
+- Dark/Light theme support
+- Frontend and backend version tracking
+- Database connection monitoring
 - Environment configuration display
 - Logging system overview
-- Version tracking
 - Health checks
 
 ## Technology Stack
@@ -20,7 +22,6 @@ A full-stack application for system monitoring and debugging, built with FastAPI
 
 ### Frontend
 - Vue 3 with Composition API
-- TypeScript for type safety
 - Vuetify 3 for UI components
 - Pinia for state management
 - Axios for API communication
@@ -33,6 +34,7 @@ A full-stack application for system monitoring and debugging, built with FastAPI
 │   │   ├── core/
 │   │   │   ├── config.py       # Application configuration
 │   │   │   ├── security.py     # Authentication utilities
+│   │   │   ├── deps.py         # Dependencies and middleware
 │   │   │   └── logging_config.py # Logging setup
 │   │   ├── models/            
 │   │   ├── schemas/
@@ -42,15 +44,10 @@ A full-stack application for system monitoring and debugging, built with FastAPI
 │
 ├── frontend/
 │   ├── src/
-│   │   ├── components/
-│   │   │   ├── system/        # System info components
-│   │   │   └── SystemDebug.vue
-│   │   ├── stores/
-│   │   │   └── system.ts      # Pinia store
-│   │   ├── types/
-│   │   │   └── system.ts      # TypeScript interfaces
-│   │   └── config/
-│   │       └── index.ts       # Frontend configuration
+│   │   ├── components/         # Vue components
+│   │   ├── views/             # Page components
+│   │   ├── stores/            # Pinia stores
+│   │   └── config/            # Frontend configuration
 │   └── package.json
 ```
 
@@ -58,27 +55,23 @@ A full-stack application for system monitoring and debugging, built with FastAPI
 
 ### Backend (.env)
 ```ini
-# Version
-VERSION=0.1.0
-
-# Database settings
+VERSION=0.1.2
 DATABASE_USER=user
 DATABASE_PASSWORD=pass
 DATABASE_HOST=localhost
 DATABASE_PORT=5432
 DATABASE_NAME=dbname
-
-# Security settings
 SECRET_KEY=your-secret-key
 ACCESS_TOKEN_EXPIRE_MINUTES=60
-
-# Environment settings
 ENVIRONMENT=development
 ```
 
 ### Frontend (.env)
 ```ini
+VITE_APP_VERSION=0.1.2
+VITE_APP_NAME=Soba
 VITE_API_BASE_URL=/api
+VITE_APP_ENV=development
 ```
 
 ## Setup and Running
@@ -124,34 +117,43 @@ npm run build
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
 
-## System Endpoints
+## Key Endpoints
 - `/health` - Basic health check
 - `/debug/system` - Detailed system information
+- `/token` - User authentication
+- `/users/me` - Current user information
+- `/users/` - User management
 
-## Development
+## Features
+### Authentication
+- JWT-based authentication
+- User registration and login
+- Secure password hashing
+- Protected routes
 
-### Backend
-- Uses FastAPI's async features
-- Comprehensive logging with rotation
-- Environment-based configuration
-- Type checking with Pydantic
-
-### Frontend
-- TypeScript for type safety
-- Component-based architecture
-- Centralized state management
-- Proxy configuration for API calls
+### System Monitoring
+- Frontend versions display
+- Backend versions tracking
+- Database connection status
 - Environment configuration
+- Logging system overview
+
+### User Interface
+- Responsive grid layout
+- Dark/Light theme switching
+- Real-time data updates
+- User-friendly forms
+- Error handling
 
 ## Logging
 All backend logs are written to `logs/app.log` with:
 - Automatic rotation at 1MB
 - Keeps 5 backup files
 - Comprehensive logging of:
+  - API requests and responses
   - Database operations
-  - API requests
   - System events
-  - Health checks
+  - Authentication attempts
 
 ## Contributing
 1. Fork the repository
