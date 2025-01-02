@@ -8,8 +8,11 @@ from functools import lru_cache
 class Settings(BaseSettings):
     """
     Application settings loaded from environment variables.
-    All settings are required - application will not start if any are missing.
+    All settings must be provided in .env file - application will fail if any are missing.
     """
+    # Version
+    VERSION: str
+    
     # Database settings
     DATABASE_USER: str
     DATABASE_PASSWORD: str
@@ -20,6 +23,9 @@ class Settings(BaseSettings):
     # Security settings
     SECRET_KEY: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
+    
+    # Environment settings
+    ENVIRONMENT: str  # development/staging/production
     
     @property
     def DATABASE_URL(self) -> str:
@@ -35,5 +41,10 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings() -> Settings:
-    """Returns cached application settings"""
+    """
+    Returns cached application settings.
+    
+    Raises:
+        ValidationError: If any required setting is missing from .env
+    """
     return Settings() 

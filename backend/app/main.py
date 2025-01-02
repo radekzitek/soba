@@ -1,26 +1,48 @@
+"""
+FastAPI application main module.
+Defines API endpoints and application configuration.
+"""
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import text
 from typing import List
 from datetime import timedelta
+import sys
+import platform
+import fastapi
+import sqlalchemy
+import pydantic
+import logging
 
+# Set up logging first, before any other imports
+from .core.logging_config import setup_logging, LOG_FILE, LOG_FORMAT, MAX_BYTES, BACKUP_COUNT
+setup_logging()
+
+# Now import other application modules
 from . import crud
 from .models import user as models
 from .schemas.user import User, UserCreate, UserUpdate, PasswordChange, Token
 from .database import engine, get_db, Base
 from .core.security import create_access_token
 from .core.config import get_settings
-from .core.logging_config import setup_logging
+from .schemas import debug as schemas
+
+# Create logger for this module
+logger = logging.getLogger(__name__)
 
 settings = get_settings()
 
 app = FastAPI(title="User Management API")
 
+# Store CORS settings in app state for debug endpoint
+app.state.cors_origins = ["*"]  # In production, replace with specific origins
+
 # CORS middleware configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with specific origins
+    allow_origins=app.state.cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -28,13 +50,12 @@ app.add_middleware(
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-# Setup logging before creating FastAPI app
-setup_logging()
-
 @app.on_event("startup")
 async def init_db():
+    logger.info("Initializing database...")
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    logger.info("Database initialized successfully")
 
 @app.post("/token", response_model=Token)
 async def login(
@@ -114,4 +135,68 @@ async def change_password(
     )
     if not success:
         raise HTTPException(status_code=400, detail="Invalid current password")
-    return {"message": "Password changed successfully"} 
+    return {"message": "Password changed successfully"}
+
+@app.get("/debug/system", response_model=schemas.DebugInfo, tags=["System"])
+async def get_debug_info(db: AsyncSession = Depends(get_db)):
+    """
+    Returns system debug information including versions, database status,
+    and configuration details.
+    """
+    try:
+        await db.execute(text("SELECT 1"))
+        db_connected = True
+        logger.info("Debug: Database connection test successful")
+    except Exception as e:
+        db_connected = False
+        logger.error(f"Debug: Database connection test failed: {e}")
+
+    debug_info = {
+        "versions": {
+            "backend_version": settings.VERSION,
+            "python_version": sys.version,
+            "fastapi_version": fastapi.__version__,
+            "sqlalchemy_version": sqlalchemy.__version__,
+            "pydantic_version": pydantic.__version__
+        },
+        "database": {
+            "connected": db_connected,
+            "database_name": settings.DATABASE_NAME,
+            "host": settings.DATABASE_HOST,
+            "port": settings.DATABASE_PORT,
+            "user": settings.DATABASE_USER,
+            "sqlalchemy_version": sqlalchemy.__version__
+        },
+        "environment": settings.ENVIRONMENT,
+        "cors_origins": app.state.cors_origins,
+        "logging_config": {
+            "log_level": logging.getLevelName(logging.root.level),
+            "log_file": str(LOG_FILE),
+            "log_format": LOG_FORMAT,
+            "max_file_size": f"{MAX_BYTES/1024/1024}MB",
+            "backup_count": BACKUP_COUNT
+        }
+    }
+    
+    logger.info("Debug information retrieved successfully")
+    return debug_info
+
+@app.get("/health", response_model=dict, tags=["System"])
+async def health_check(db: AsyncSession = Depends(get_db)):
+    """
+    Simple health check endpoint.
+    Returns 200 if the service is up and database is connected.
+    """
+    try:
+        await db.execute(text("SELECT 1"))
+        logger.info("Health check passed")
+        return {
+            "status": "healthy",
+            "database": "connected"
+        }
+    except Exception as e:
+        logger.error(f"Health check failed: {e}")
+        raise HTTPException(
+            status_code=503,
+            detail="Service unhealthy - database connection failed"
+        ) 

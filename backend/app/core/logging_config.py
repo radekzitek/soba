@@ -15,6 +15,26 @@ LOG_LEVEL = logging.INFO
 MAX_BYTES = 1024 * 1024  # 1MB
 BACKUP_COUNT = 5
 
+# Define logger names
+SQLALCHEMY_LOGGERS = [
+    'sqlalchemy.engine',
+    'sqlalchemy.pool',
+    'sqlalchemy.dialects',
+    'sqlalchemy.orm'
+]
+
+UVICORN_LOGGERS = [
+    'uvicorn',
+    'uvicorn.error',
+    'uvicorn.access',
+    'uvicorn.asgi',
+    'uvicorn.protocols'
+]
+
+FASTAPI_LOGGERS = [
+    'fastapi'
+]
+
 def setup_logging() -> None:
     """
     Configures application-wide logging.
@@ -40,10 +60,8 @@ def setup_logging() -> None:
     root_logger.addHandler(file_handler)
 
     # Ensure all loggers propagate to root
-    for logger_name in (
-        'sqlalchemy.engine',
-        'uvicorn',
-        'uvicorn.access',
-        'uvicorn.error'
-    ):
-        logging.getLogger(logger_name).propagate = True 
+    for logger_name in [*SQLALCHEMY_LOGGERS, *UVICORN_LOGGERS, *FASTAPI_LOGGERS]:
+        logger = logging.getLogger(logger_name)
+        logger.handlers = []  # Remove any existing handlers
+        logger.propagate = True
+        logger.setLevel(LOG_LEVEL) 
