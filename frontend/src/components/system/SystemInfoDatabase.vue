@@ -21,14 +21,15 @@
   </v-expansion-panel>
 </template>
 
-<script setup lang="ts">
-import type { DatabaseInfo } from '@/types/system'
+<script setup>
+defineProps({
+  database: {
+    type: Object,
+    required: true
+  }
+})
 
-defineProps<{
-  database: DatabaseInfo
-}>()
-
-const formatKey = (key: string): string => {
+const formatKey = (key) => {
   return key.split('_').map(word => 
     word.charAt(0).toUpperCase() + word.slice(1)
   ).join(' ')

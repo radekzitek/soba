@@ -39,7 +39,7 @@
   </v-container>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { onMounted } from 'vue'
 import { useSystemStore } from '@/stores/system'
 import SystemInfoVersions from './system/SystemInfoVersions.vue'

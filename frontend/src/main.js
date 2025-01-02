@@ -1,31 +1,38 @@
 /**
  * Main application entry point
- * Sets up Vue with Vuetify and Pinia
+ * Initializes Vue application with required plugins and configuration
  */
+
+// Core imports
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
+
+// Plugins
 import vuetify from './plugins/vuetify'
 import router from './router'
+
+// Store imports
 import { useAuthStore } from '@/stores/auth'
+import { useThemeStore } from '@/stores/theme'
 
 // Styles
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
 import './style.css'
 
-// Create and configure app
+// Initialize application
 const app = createApp(App)
 const pinia = createPinia()
 
-// Install plugins
+// Register plugins
 app.use(pinia)
 app.use(vuetify)
 app.use(router)
 
-// Initialize auth state
+// Initialize stores
 const authStore = useAuthStore()
 authStore.init()
 
-// Mount app
+// Mount application
 app.mount('#app')
