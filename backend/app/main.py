@@ -28,6 +28,7 @@ from .database import engine, get_db, Base
 from .core.security import create_access_token
 from .core.config import get_settings
 from .schemas import debug as schemas
+from .core.middleware import APILoggingMiddleware
 
 # Create logger for this module
 logger = logging.getLogger(__name__)
@@ -47,6 +48,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Add after other middleware
+app.add_middleware(APILoggingMiddleware)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
