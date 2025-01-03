@@ -2,213 +2,40 @@
 FastAPI application main module.
 Defines API endpoints and application configuration.
 """
-from fastapi import FastAPI, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import text
-from typing import List
-from datetime import timedelta
-import sys
-import platform
-import fastapi
-import sqlalchemy
-import pydantic
+from .database import engine, Base
+from .routers import accounts, users, system
+from .core.middleware import APILoggingMiddleware
 import logging
 
-# Set up logging first, before any other imports
-from .core.logging_config import setup_logging, LOG_FILE, LOG_FORMAT, MAX_BYTES, BACKUP_COUNT
+# Set up logging
+from .core.logging_config import setup_logging
 setup_logging()
-
-# Now import other application modules
-from . import crud
-from .models import user as models
-from .schemas.user import User, UserCreate, UserUpdate, PasswordChange, Token
-from .database import engine, get_db, Base
-from .core.security import create_access_token
-from .core.config import get_settings
-from .schemas import debug as schemas
-from .core.middleware import APILoggingMiddleware
-from .core.deps import get_current_user
-
-# Create logger for this module
 logger = logging.getLogger(__name__)
 
-settings = get_settings()
+app = FastAPI(title="Family Finance Manager API")
 
-app = FastAPI(title="User Management API")
-
-# Store CORS settings in app state for debug endpoint
-app.state.cors_origins = ["*"]  # In production, replace with specific origins
-
-# CORS middleware configuration
+# CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=app.state.cors_origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Add after other middleware
+# Add logging middleware
 app.add_middleware(APILoggingMiddleware)
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+# Include routers
+app.include_router(users.router)
+app.include_router(accounts.router)
+app.include_router(system.router)
 
 @app.on_event("startup")
 async def init_db():
     logger.info("Initializing database...")
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    logger.info("Database initialized successfully")
-
-@app.post("/token", response_model=Token)
-async def login(
-    form_data: OAuth2PasswordRequestForm = Depends(),
-    db: AsyncSession = Depends(get_db)
-):
-    user = await crud.authenticate_user(db, form_data.username, form_data.password)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": str(user.id)},
-        expires_delta=access_token_expires
-    )
-    return {"access_token": access_token, "token_type": "bearer"}
-
-@app.post("/users/", response_model=User)
-async def create_user(
-    user: UserCreate,
-    db: AsyncSession = Depends(get_db)
-):
-    db_user = await crud.get_user_by_email(db, user.user_email)
-    if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    
-    db_user = await crud.get_user_by_login(db, user.user_login)
-    if db_user:
-        raise HTTPException(status_code=400, detail="Login already registered")
-    
-    return await crud.create_user(db=db, user=user)
-
-@app.get("/users/", response_model=List[User])
-async def read_users(
-    skip: int = 0,
-    limit: int = 100,
-    db: AsyncSession = Depends(get_db)
-):
-    users = await crud.get_users(db, skip=skip, limit=limit)
-    return users
-
-@app.get("/users/me", response_model=User)
-async def read_current_user(current_user: User = Depends(get_current_user)):
-    """
-    Get details of currently authenticated user.
-    """
-    return current_user
-
-@app.get("/users/{user_id}", response_model=User)
-async def read_user(
-    user_id: int,
-    db: AsyncSession = Depends(get_db)
-):
-    db_user = await crud.get_user(db, user_id=user_id)
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return db_user
-
-@app.put("/users/{user_id}", response_model=User)
-async def update_user(
-    user_id: int,
-    user: UserUpdate,
-    db: AsyncSession = Depends(get_db)
-):
-    db_user = await crud.update_user(db, user_id=user_id, user_update=user)
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return db_user
-
-@app.post("/users/{user_id}/change-password")
-async def change_password(
-    user_id: int,
-    password_change: PasswordChange,
-    db: AsyncSession = Depends(get_db)
-):
-    success = await crud.change_password(
-        db,
-        user_id=user_id,
-        current_password=password_change.current_password,
-        new_password=password_change.new_password
-    )
-    if not success:
-        raise HTTPException(status_code=400, detail="Invalid current password")
-    return {"message": "Password changed successfully"}
-
-@app.get("/debug/system", response_model=schemas.DebugInfo, tags=["System"])
-async def get_debug_info(db: AsyncSession = Depends(get_db)):
-    """
-    Returns system debug information including versions, database status,
-    and configuration details.
-    """
-    try:
-        await db.execute(text("SELECT 1"))
-        db_connected = True
-        logger.info("Debug: Database connection test successful")
-    except Exception as e:
-        db_connected = False
-        logger.error(f"Debug: Database connection test failed: {e}")
-
-    debug_info = {
-        "versions": {
-            "backend_version": settings.VERSION,
-            "python_version": sys.version,
-            "fastapi_version": fastapi.__version__,
-            "sqlalchemy_version": sqlalchemy.__version__,
-            "pydantic_version": pydantic.__version__
-        },
-        "database": {
-            "connected": db_connected,
-            "database_name": settings.DATABASE_NAME,
-            "host": settings.DATABASE_HOST,
-            "port": settings.DATABASE_PORT,
-            "user": settings.DATABASE_USER,
-            "sqlalchemy_version": sqlalchemy.__version__
-        },
-        "environment": settings.ENVIRONMENT,
-        "cors_origins": app.state.cors_origins,
-        "logging_config": {
-            "log_level": logging.getLevelName(logging.root.level),
-            "log_file": str(LOG_FILE),
-            "log_format": LOG_FORMAT,
-            "max_file_size": f"{MAX_BYTES/1024/1024}MB",
-            "backup_count": BACKUP_COUNT
-        }
-    }
-    
-    logger.info("Debug information retrieved successfully")
-    return debug_info
-
-@app.get("/health", response_model=dict, tags=["System"])
-async def health_check(db: AsyncSession = Depends(get_db)):
-    """
-    Simple health check endpoint.
-    Returns 200 if the service is up and database is connected.
-    """
-    try:
-        await db.execute(text("SELECT 1"))
-        logger.info("Health check passed")
-        return {
-            "status": "healthy",
-            "database": "connected"
-        }
-    except Exception as e:
-        logger.error(f"Health check failed: {e}")
-        raise HTTPException(
-            status_code=503,
-            detail="Service unhealthy - database connection failed"
-        ) 
+    logger.info("Database initialized successfully") 

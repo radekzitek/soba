@@ -38,7 +38,7 @@ export const useAuthStore = defineStore('auth', {
         formData.append('password', password)
 
         const response = await axios.post(
-          `${config.api.baseUrl}/token`,
+          `${config.api.baseUrl}/users/token`,
           formData.toString(),
           {
             headers: {

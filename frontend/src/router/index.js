@@ -22,6 +22,11 @@ const routes = [
   {
     path: '/register',
     component: Register
+  },
+  {
+    path: '/accounts',
+    component: () => import('@/views/AccountList.vue'),
+    meta: { requiresAuth: true }
   }
 ]
 

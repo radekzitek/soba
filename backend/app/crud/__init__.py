@@ -8,6 +8,13 @@ from .user import (
     authenticate_user,
     change_password
 )
+from .accounts import (
+    get_account,
+    get_accounts,
+    create_account,
+    update_account,
+    delete_account
+)
 
 __all__ = [
     "get_user",
