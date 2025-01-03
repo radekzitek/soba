@@ -13,7 +13,7 @@
           color="primary"
           @click="openDialog()"
         >
-          <v-icon left>mdi-plus</v-icon>
+          <v-icon start>mdi-plus</v-icon>
           Add Counterparty
         </v-btn>
       </v-card-title>
@@ -35,20 +35,20 @@
         :items="store.counterparties"
         :loading="store.loading"
       >
-        <template v-slot:item.is_active="{ item }">
+        <template #[`item.is_active`]="{ item }">
           <v-chip
-            :color="item.raw.is_active ? 'success' : 'grey'"
+            :color="item.is_active ? 'success' : 'grey'"
             size="small"
           >
-            {{ item.raw.is_active ? 'Active' : 'Inactive' }}
+            {{ item.is_active ? 'Active' : 'Inactive' }}
           </v-chip>
         </template>
 
-        <template v-slot:item.actions="{ item }">
+        <template #[`item.actions`]="{ item }">
           <v-btn
             icon
             size="small"
-            @click="openDialog(item.raw)"
+            @click="openDialog(item)"
             class="mr-2"
           >
             <v-icon>mdi-pencil</v-icon>
@@ -57,7 +57,7 @@
             icon
             size="small"
             color="error"
-            @click="handleDelete(item.raw.id)"
+            @click="handleDelete(item.id)"
           >
             <v-icon>mdi-delete</v-icon>
           </v-btn>
@@ -87,8 +87,8 @@ const dialogLoading = ref(false)
 const showInactive = ref(false)
 
 const headers = [
-  { title: 'Name', key: 'name' },
-  { title: 'Description', key: 'description' },
+  { title: 'Name', key: 'name', align: 'start' },
+  { title: 'Description', key: 'description', align: 'start' },
   { title: 'Status', key: 'is_active', align: 'center' },
   { title: 'Actions', key: 'actions', align: 'end', sortable: false }
 ]
