@@ -12,70 +12,50 @@ A full-stack application for managing family finances, built with FastAPI and Vu
 
 ## Technology Stack
 ### Backend
-- FastAPI for REST API
-- Async PostgreSQL with SQLAlchemy
+- FastAPI with async/await support
+- SQLAlchemy 2.0 with async drivers
+- PostgreSQL with asyncpg
 - JWT Authentication
+- Pydantic 2.0 for data validation
 - Comprehensive logging system
+- Class-based CRUD operations
 - Environment-based configuration
+- Automated database migrations
 
 ### Frontend
 - Vue 3 with Composition API
 - Vuetify 3 for UI components
 - Pinia for state management
 - Axios for API communication
-- Vite for development and building
+- TypeScript support
+- Component-based architecture
 
 ## Project Structure
 ```
-├── backend/
-│   ├── app/
-│   │   ├── core/          # Core functionality
-│   │   ├── routers/       # API routes
-│   │   ├── models/        # Database models
-│   │   ├── schemas/       # Pydantic schemas
-│   │   └── crud/          # Database operations
-│   └── requirements.txt
-│
-├── frontend/
-│   ├── src/
-│   │   ├── components/    # Vue components
-│   │   ├── views/         # Page components
-│   │   ├── stores/        # Pinia stores
-│   │   └── services/      # API services
-│   └── package.json
-│
-└── finance_db/            # Database schema and seeds
-    ├── schema/
-    └── seed/
+backend/
+├── app/
+│   ├── core/          # Core functionality (auth, config, logging)
+│   ├── crud/          # Database operations
+│   ├── models/        # SQLAlchemy models
+│   ├── routers/       # API endpoints
+│   └── schemas/       # Pydantic schemas
+frontend/
+├── src/
+│   ├── components/    # Vue components
+│   ├── views/         # Page components
+│   ├── stores/        # Pinia stores
+│   └── services/      # API services
+finance_db/
+├── schema/           # Database schema and migrations
+└── seed/            # Sample data for development
 ```
 
-## Features
-### Account Management
-- Create and manage multiple accounts
-- Track account balances
-- Support for different account types
-- Multi-currency support
-- Active/Inactive status tracking
-
-### User Management
-- User registration and authentication
-- JWT-based security
-- User profile management
-
-### System Features
-- Dark/Light theme
-- Real-time data updates
-- System monitoring
-- Comprehensive logging
-
-## Setup and Running
-
-### Backend
-1. Create Python virtual environment:
+## Getting Started
+### Backend Setup
+1. Create virtual environment:
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # Linux/Mac
-.venv\Scripts\activate     # Windows
+python -m venv venv
+source venv/bin/activate  # or `venv\Scripts\activate` on Windows
 ```
 
 2. Install dependencies:
@@ -83,36 +63,33 @@ source .venv/bin/activate  # Linux/Mac
 pip install -r requirements.txt
 ```
 
-3. Create `.env` file with required configuration
+3. Set up environment variables in `.env`
 
-4. Run the application:
+4. Run migrations:
+```bash
+psql -U your_user -d your_database -f finance_db/schema/01_create_tables.sql
+psql -U your_user -d your_database -f finance_db/schema/02_add_timestamps.sql
+```
+
+5. Start the server:
 ```bash
 python run.py
 ```
 
-### Frontend
+### Frontend Setup
 1. Install dependencies:
 ```bash
-cd frontend
 npm install
 ```
 
-2. Run development server:
+2. Start development server:
 ```bash
 npm run dev
-```
-
-3. Build for production:
-```bash
-npm run build
 ```
 
 ## API Documentation
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
-
-## Database Schema
-See [finance_db/README.md](finance_db/README.md) for detailed database documentation.
 
 ## Contributing
 1. Fork the repository
@@ -121,5 +98,5 @@ See [finance_db/README.md](finance_db/README.md) for detailed database documenta
 4. Push to the branch
 5. Create a Pull Request
 
-## Version History
-See [CHANGELOG.md](CHANGELOG.md) for version history.
+## License
+MIT

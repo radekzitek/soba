@@ -1,43 +1,33 @@
-"""
-Database configuration module.
-Handles database connection and session management using SQLAlchemy async engine.
-"""
+"""Database configuration and session management."""
 from typing import AsyncGenerator
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
-from sqlalchemy.orm import DeclarativeBase
-
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.ext.asyncio import async_sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 from .core.config import get_settings
 
 settings = get_settings()
 
-class Base(DeclarativeBase):
-    """Base class for SQLAlchemy models"""
-    pass
-
-# Create async engine for database connection
+# Create async engine
 engine = create_async_engine(
     settings.DATABASE_URL,
-    echo=False,  # Disable console echo since we're using file logging
+    echo=settings.DEBUG,
+    future=True
 )
 
-# Create session factory for database operations
-AsyncSessionMaker = async_sessionmaker(
+# Create async session factory
+AsyncSessionLocal = async_sessionmaker(
     engine,
     class_=AsyncSession,
-    expire_on_commit=False,
+    expire_on_commit=False
 )
 
+# Create declarative base
+Base = declarative_base()
+
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
-    """
-    Dependency function that yields database sessions.
-    
-    Yields:
-        AsyncSession: SQLAlchemy async session for database operations
-    
-    Usage:
-        @app.get("/endpoint")
-        async def endpoint(db: AsyncSession = Depends(get_db)):
-            ...
-    """
-    async with AsyncSessionMaker() as session:
-        yield session 
+    """Dependency for getting database sessions."""
+    async with AsyncSessionLocal() as session:
+        try:
+            yield session
+        finally:
+            await session.close() 

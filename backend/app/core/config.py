@@ -1,17 +1,17 @@
-"""
-Application configuration settings.
-Handles environment variables and configuration settings for the application.
-"""
-from pydantic_settings import BaseSettings
+"""Application configuration management."""
 from functools import lru_cache
+from typing import Optional
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     """
-    Application settings loaded from environment variables.
-    All settings must be provided in .env file - application will fail if any are missing.
+    Application settings.
+    
+    All settings are loaded from environment variables.
+    Default values are provided for development.
     """
     # Version
-    VERSION: str
+    VERSION: str = "0.1.3"
     
     # Database settings
     DATABASE_USER: str
@@ -20,31 +20,42 @@ class Settings(BaseSettings):
     DATABASE_PORT: str
     DATABASE_NAME: str
     
-    # Security settings
-    SECRET_KEY: str
-    ACCESS_TOKEN_EXPIRE_MINUTES: int
-    
-    # Environment settings
-    ENVIRONMENT: str  # development/staging/production
-    
     @property
     def DATABASE_URL(self) -> str:
-        """Constructs PostgreSQL connection URL from settings"""
+        """Constructs the database URL from components."""
         return (
             f"postgresql+asyncpg://{self.DATABASE_USER}:{self.DATABASE_PASSWORD}"
             f"@{self.DATABASE_HOST}:{self.DATABASE_PORT}/{self.DATABASE_NAME}"
         )
     
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    # Security settings
+    SECRET_KEY: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    
+    # Environment settings
+    ENVIRONMENT: str = "development"
+    DEBUG: bool = True
+    
+    # CORS settings
+    CORS_ORIGINS: list[str] = ["*"]
+    CORS_CREDENTIALS: bool = True
+    CORS_METHODS: list[str] = ["*"]
+    CORS_HEADERS: list[str] = ["*"]
+    
+    # Logging settings
+    LOG_LEVEL: str = "INFO"
+    
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True
+    )
 
 @lru_cache
 def get_settings() -> Settings:
     """
     Returns cached application settings.
     
-    Raises:
-        ValidationError: If any required setting is missing from .env
+    Uses lru_cache to prevent multiple reads of environment variables.
     """
     return Settings() 

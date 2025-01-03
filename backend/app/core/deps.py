@@ -1,22 +1,32 @@
+"""Dependencies for FastAPI endpoints."""
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Optional
+from typing import Annotated
 
 from ..database import get_db
-from .. import crud
-from .security import verify_token
+from ..crud.users import user
+from .security import decode_token
 from ..models.user import User
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/token")
 
 async def get_current_user(
-    token: str = Depends(oauth2_scheme),
-    db: AsyncSession = Depends(get_db)
+    token: Annotated[str, Depends(oauth2_scheme)],
+    db: Annotated[AsyncSession, Depends(get_db)]
 ) -> User:
     """
     Validates JWT token and returns the current user.
-    Raises 401 if token is invalid or user not found.
+    
+    Args:
+        token: JWT token from request
+        db: Database session
+        
+    Returns:
+        Current authenticated user
+        
+    Raises:
+        HTTPException: If credentials are invalid or user not found
     """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -25,13 +35,17 @@ async def get_current_user(
     )
     
     # Verify token and extract user_id
-    user_id = verify_token(token)
+    payload = decode_token(token)
+    if payload is None:
+        raise credentials_exception
+    
+    user_id = payload.get("sub")
     if user_id is None:
         raise credentials_exception
         
     # Get user from database using ID
-    user = await crud.get_user(db, int(user_id))
-    if user is None:
+    db_user = await user.get(db, int(user_id))
+    if db_user is None:
         raise credentials_exception
         
-    return user 
+    return db_user 

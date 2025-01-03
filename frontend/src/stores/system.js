@@ -23,7 +23,7 @@ export const useSystemStore = defineStore('system', {
       this.error = null
       
       try {
-        const response = await axios.get('/api/debug/system')
+        const response = await axios.get('/api/system/debug')
         this.systemInfo = response.data
       } catch (error) {
         const errorMessage = error.response?.data?.detail || 'Failed to fetch system information'

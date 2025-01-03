@@ -51,12 +51,9 @@
         </v-card>
       </v-col>
     </v-row>
-
-    <!-- System Debug Info -->
-    <SystemDebug />
   </v-container>
 </template>
 
 <script setup>
-import SystemDebug from '@/views/SystemDebug.vue'
+// No imports needed anymore
 </script> 
