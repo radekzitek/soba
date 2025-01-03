@@ -33,7 +33,15 @@
                             </template>
                             <v-list-item-title>Accounts</v-list-item-title>
                         </v-list-item>
-
+                        <v-list-item
+                            to="/counterparties"
+                            :active="route.path === '/counterparties'"
+                        >
+                            <template v-slot:prepend>
+                                <v-icon>mdi-account-multiple</v-icon>
+                            </template>
+                            <v-list-item-title>Counterparties</v-list-item-title>
+                        </v-list-item>
                         <v-list-item
                             to="/debug"
                             :active="route.path === '/debug'"
@@ -44,15 +52,7 @@
                             <v-list-item-title>System Debug</v-list-item-title>
                         </v-list-item>
 
-                        <v-list-item
-                            to="/counterparties"
-                            :active="route.path === '/counterparties'"
-                        >
-                            <template v-slot:prepend>
-                                <v-icon>mdi-account-multiple</v-icon>
-                            </template>
-                            <v-list-item-title>Counterparties</v-list-item-title>
-                        </v-list-item>
+
                     </v-list>
                 </v-menu>
             </template>

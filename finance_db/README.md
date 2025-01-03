@@ -3,142 +3,126 @@
 ## Overview
 This database schema is designed for a family finance management system. It supports tracking of income, expenses, transfers between accounts, budgeting, and financial planning.
 
-## Tables
+## Database Structure
 
-### Main Categories (`main_categories`)
-Top-level categorization for transactions and budgets.
-| Column | Type | Description |
-|--------|------|-------------|
-| id | SERIAL | Primary key |
-| name | VARCHAR(50) | Unique category name |
-| description | TEXT | Category description |
-| created_at | TIMESTAMP | Record creation timestamp |
-| updated_at | TIMESTAMP | Last update timestamp |
-
-### Sub Categories (`sub_categories`)
-Detailed categorization linked to main categories.
-| Column | Type | Description |
-|--------|------|-------------|
-| id | SERIAL | Primary key |
-| main_category_id | INTEGER | Reference to main category |
-| name | VARCHAR(50) | Sub-category name |
-| description | TEXT | Sub-category description |
-| created_at | TIMESTAMP | Record creation timestamp |
-| updated_at | TIMESTAMP | Last update timestamp |
+### Users (`user_table`)
+Stores user authentication and profile information.
+- `id` - Primary key
+- `user_login` - Unique username (VARCHAR(255))
+- `user_pass` - Hashed password (VARCHAR(255))
+- `user_full_name` - User's full name (VARCHAR(255))
+- `user_email` - Unique email address (VARCHAR(255))
+- `user_note` - Optional notes (VARCHAR(255))
+- `created_at`, `updated_at` - Timestamps
 
 ### Accounts (`accounts`)
-Financial accounts for tracking balances and transactions.
-| Column | Type | Description |
-|--------|------|-------------|
-| id | SERIAL | Primary key |
-| name | VARCHAR(100) | Account name |
-| account_type | account_type | Type of account (enum) |
-| initial_balance | DECIMAL(12,2) | Starting balance |
-| current_balance | DECIMAL(12,2) | Current balance |
-| currency | VARCHAR(3) | Currency code (default 'USD') |
-| is_active | BOOLEAN | Account status |
-| description | TEXT | Account description |
-| created_at | TIMESTAMP | Record creation timestamp |
-| updated_at | TIMESTAMP | Last update timestamp |
+Financial accounts like bank accounts, credit cards, etc.
+- `id` - Primary key
+- `name` - Account name (VARCHAR(100))
+- `account_type` - ENUM('cash', 'checking', 'savings', 'credit_card', 'investment')
+- `initial_balance` - Starting balance (DECIMAL(12,2))
+- `current_balance` - Current balance (DECIMAL(12,2))
+- `currency` - Three-letter currency code (VARCHAR(3))
+- `is_active` - Account status flag (BOOLEAN)
+- `description` - Optional description (TEXT)
+- `created_at`, `updated_at` - Timestamps
+
+### Main Categories (`main_categories`)
+Top-level transaction categories.
+- `id` - Primary key
+- `name` - Category name (VARCHAR(50))
+- `description` - Category description (TEXT)
+- `created_at`, `updated_at` - Timestamps
+
+### Sub Categories (`sub_categories`)
+Detailed transaction categories within main categories.
+- `id` - Primary key
+- `main_category_id` - Foreign key to main_categories
+- `name` - Sub-category name (VARCHAR(50))
+- `description` - Sub-category description (TEXT)
+- `created_at`, `updated_at` - Timestamps
+- Unique constraint on (main_category_id, name)
 
 ### Counterparties (`counterparties`)
 Entities involved in transactions (payees/payers).
-| Column | Type | Description |
-|--------|------|-------------|
-| id | SERIAL | Primary key |
-| name | VARCHAR(100) | Unique counterparty name |
-| description | TEXT | Description |
-| website | VARCHAR(255) | Website URL |
-| is_frequent | BOOLEAN | Frequently used flag |
-| created_at | TIMESTAMP | Record creation timestamp |
-| updated_at | TIMESTAMP | Last update timestamp |
+- `id` - Primary key
+- `name` - Counterparty name (VARCHAR(100))
+- `description` - Optional description (TEXT)
+- `is_active` - Status flag (BOOLEAN)
+- `created_at`, `updated_at` - Timestamps
 
 ### Transactions (`transactions`)
 Financial transactions record.
-| Column | Type | Description |
-|--------|------|-------------|
-| id | SERIAL | Primary key |
-| transaction_date | DATE | Date of transaction |
-| transaction_type | transaction_type | Type (income/expense/transfer) |
-| amount | DECIMAL(12,2) | Transaction amount |
-| account_id | INTEGER | Reference to account |
-| counterparty_id | INTEGER | Reference to counterparty |
-| sub_category_id | INTEGER | Reference to sub-category |
-| description | TEXT | Transaction description |
-| notes | TEXT | Additional notes |
-| is_recurring | BOOLEAN | Recurring transaction flag |
-| created_at | TIMESTAMP | Record creation timestamp |
-| updated_at | TIMESTAMP | Last update timestamp |
+- `id` - Primary key
+- `transaction_date` - Date of transaction (DATE)
+- `transaction_type` - ENUM('income', 'expense', 'transfer')
+- `amount` - Transaction amount (DECIMAL(12,2))
+- `account_id` - Foreign key to accounts
+- `counterparty_id` - Foreign key to counterparties
+- `sub_category_id` - Foreign key to sub_categories
+- `description` - Transaction description (TEXT)
+- `notes` - Additional notes (TEXT)
+- `is_recurring` - Recurring transaction flag (BOOLEAN)
+- `created_at`, `updated_at` - Timestamps
 
 ### Transfer Transactions (`transfer_transactions`)
-Links pairs of transactions for account transfers.
-| Column | Type | Description |
-|--------|------|-------------|
-| id | SERIAL | Primary key |
-| from_transaction_id | INTEGER | Source transaction reference |
-| to_transaction_id | INTEGER | Destination transaction reference |
-| created_at | TIMESTAMP | Record creation timestamp |
+Links pairs of transactions for transfers between accounts.
+- `id` - Primary key
+- `from_transaction_id` - Foreign key to transactions (source)
+- `to_transaction_id` - Foreign key to transactions (destination)
+- `created_at` - Timestamp
 
-### Budgets (`budgets`)
-Budget period definitions.
-| Column | Type | Description |
-|--------|------|-------------|
-| id | SERIAL | Primary key |
-| name | VARCHAR(100) | Budget name |
-| start_date | DATE | Budget start date |
-| end_date | DATE | Budget end date |
-| period | budget_period | Period type (monthly/quarterly/yearly) |
-| description | TEXT | Budget description |
-| is_active | BOOLEAN | Active budget flag |
-| created_at | TIMESTAMP | Record creation timestamp |
-| updated_at | TIMESTAMP | Last update timestamp |
+## Enums
+- `account_type`: Types of financial accounts
+  - cash
+  - checking
+  - savings
+  - credit_card
+  - investment
 
-### Budget Items (`budget_items`)
-Individual budget allocations per category.
-| Column | Type | Description |
-|--------|------|-------------|
-| id | SERIAL | Primary key |
-| budget_id | INTEGER | Reference to budget |
-| sub_category_id | INTEGER | Reference to sub-category |
-| planned_amount | DECIMAL(12,2) | Budgeted amount |
-| notes | TEXT | Additional notes |
-| created_at | TIMESTAMP | Record creation timestamp |
-| updated_at | TIMESTAMP | Last update timestamp |
+- `transaction_type`: Types of transactions
+  - income
+  - expense
+  - transfer
 
-## Custom Types
+- `budget_period`: Budget time periods
+  - monthly
+  - quarterly
+  - yearly
 
-### transaction_type
-- `income`: Money received
-- `expense`: Money spent
-- `transfer`: Money moved between accounts
-
-### account_type
-- `cash`: Physical cash
-- `checking`: Checking account
-- `savings`: Savings account
-- `credit_card`: Credit card account
-- `investment`: Investment account
-
-### budget_period
-- `monthly`: Monthly budget
-- `quarterly`: Quarterly budget
-- `yearly`: Yearly budget
-
-## Indexes
-- `idx_transactions_date`: Transaction date lookup
-- `idx_transactions_type`: Transaction type filtering
-- `idx_transactions_account`: Account transactions lookup
-- `idx_transactions_category`: Category transactions lookup
-- `idx_budget_items_budget`: Budget items lookup
-- `idx_budget_dates`: Budget period lookup
-
-## Triggers
-All tables have an `updated_at` trigger that automatically updates the timestamp when records are modified.
+## Timestamps and Triggers
+All tables include:
+- `created_at` - Record creation timestamp
+- `updated_at` - Last modification timestamp
+- Automatic trigger to update `updated_at` on record modification
 
 ## Constraints
 - Main category names are unique
 - Sub-category names are unique within their main category
 - Counterparty names are unique
-- Budget items are unique per budget and sub-category combination
 - All foreign keys are properly constrained
-- Decimal fields use (12,2) precision for monetary values 
+- Decimal fields use (12,2) precision for monetary values
+
+## Usage
+1. Create database and user:
+```sql
+CREATE DATABASE soba_finance;
+CREATE USER soba_user WITH PASSWORD 'your_password';
+GRANT ALL PRIVILEGES ON DATABASE soba_finance TO soba_user;
+```
+
+2. Initialize schema:
+```bash
+psql -U soba_user -d soba_finance -f schema.sql
+```
+
+3. Load sample data (optional):
+```bash
+psql -U soba_user -d soba_finance -f seed.sql
+```
+
+## Notes
+- All monetary values use DECIMAL(12,2) for precision
+- Timestamps use timezone-aware type
+- Soft deletion implemented via is_active flags
+- Transfer transactions are linked pairs for account-to-account transfers 

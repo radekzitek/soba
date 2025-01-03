@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia'
 import { accountApi } from '@/services/accountApi'
+import axios from 'axios'
+import { config } from '@/config'
 
 export const useAccountStore = defineStore('account', {
   state: () => ({
@@ -16,12 +18,16 @@ export const useAccountStore = defineStore('account', {
 
   actions: {
     async fetchAccounts(includeInactive = false) {
+      this.loading = true
+      this.error = null
       try {
-        this.loading = true
-        this.accounts = await accountApi.getAccounts(includeInactive)
+        const response = await axios.get(`${config.api.baseUrl}/accounts/`, {
+          params: { include_inactive: includeInactive }
+        })
+        this.accounts = response.data
       } catch (error) {
         this.error = error.response?.data?.detail || 'Failed to fetch accounts'
-        console.error('Error:', error)
+        console.error('Accounts fetch error:', error)
       } finally {
         this.loading = false
       }

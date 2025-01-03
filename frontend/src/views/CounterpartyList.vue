@@ -8,14 +8,9 @@
           v-model="showInactive"
           label="Show Inactive"
           class="mr-4"
-        ></v-switch>
-        <v-btn
           color="primary"
-          @click="openDialog()"
-        >
-          <v-icon start>mdi-plus</v-icon>
-          Add Counterparty
-        </v-btn>
+          inset
+        ></v-switch>
       </v-card-title>
 
       <!-- Loading State -->
@@ -72,6 +67,16 @@
       :loading="dialogLoading"
       @save="handleSave"
     />
+
+    <!-- Floating Action Button -->
+    <v-btn
+      color="primary"
+      icon="mdi-plus"
+      size="large"
+      @click="openDialog()"
+      class="fab-button"
+    >
+    </v-btn>
   </v-container>
 </template>
 
@@ -125,4 +130,12 @@ watch(showInactive, (newValue) => {
 onMounted(() => {
   store.fetchCounterparties(showInactive.value)
 })
-</script> 
+</script>
+
+<style scoped>
+.fab-button {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+}
+</style> 

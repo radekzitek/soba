@@ -4,13 +4,13 @@
       <v-card-title class="d-flex align-center">
         Accounts
         <v-spacer />
-        <v-btn
+        <v-switch
+          v-model="showInactive"
+          label="Show Inactive"
+          class="mr-4"
           color="primary"
-          prepend-icon="mdi-plus"
-          @click="showCreateDialog = true"
-        >
-          Add Account
-        </v-btn>
+          inset
+        ></v-switch>
       </v-card-title>
 
       <!-- Loading State -->
@@ -76,10 +76,21 @@
 
     <!-- Create/Edit Dialog -->
     <AccountDialog
-      v-model="showCreateDialog"
+      v-model="showDialog"
       :account="selectedAccount"
+      :loading="dialogLoading"
       @save="handleSave"
     />
+
+    <!-- Floating Action Button -->
+    <v-btn
+      color="primary"
+      icon="mdi-plus"
+      size="large"
+      @click="openDialog()"
+      class="fab-button"
+    >
+    </v-btn>
 
     <!-- Delete Confirmation -->
     <v-dialog v-model="showDeleteDialog" max-width="400">
@@ -99,15 +110,16 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useAccountStore } from '@/stores/account'
 import AccountDialog from '@/components/AccountDialog.vue'
 
 const accountStore = useAccountStore()
-const showCreateDialog = ref(false)
+const showDialog = ref(false)
 const showDeleteDialog = ref(false)
 const selectedAccount = ref(null)
 const accountToDelete = ref(null)
+const showInactive = ref(false)
 
 const formatAccountType = (type) => {
   return type.split('_').map(word => 
@@ -124,7 +136,7 @@ const formatCurrency = (amount) => {
 
 const editAccount = (account) => {
   selectedAccount.value = account
-  showCreateDialog.value = true
+  showDialog.value = true
 }
 
 const confirmDelete = (account) => {
@@ -139,7 +151,7 @@ const handleSave = async (accountData) => {
     } else {
       await accountStore.createAccount(accountData)
     }
-    showCreateDialog.value = false
+    showDialog.value = false
     selectedAccount.value = null
   } catch (error) {
     console.error('Save failed:', error)
@@ -158,7 +170,19 @@ const handleDelete = async () => {
   }
 }
 
-onMounted(() => {
-  accountStore.fetchAccounts()
+watch(showInactive, (newValue) => {
+  accountStore.fetchAccounts(newValue)
 })
-</script> 
+
+onMounted(() => {
+  accountStore.fetchAccounts(showInactive.value)
+})
+</script>
+
+<style scoped>
+.fab-button {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+}
+</style> 
