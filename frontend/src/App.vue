@@ -43,6 +43,16 @@
                             </template>
                             <v-list-item-title>System Debug</v-list-item-title>
                         </v-list-item>
+
+                        <v-list-item
+                            to="/counterparties"
+                            :active="route.path === '/counterparties'"
+                        >
+                            <template v-slot:prepend>
+                                <v-icon>mdi-account-multiple</v-icon>
+                            </template>
+                            <v-list-item-title>Counterparties</v-list-item-title>
+                        </v-list-item>
                     </v-list>
                 </v-menu>
             </template>
@@ -59,7 +69,7 @@
             
             <v-spacer></v-spacer>
 
-            <!-- User menu -->
+            <!-- User menu when authenticated -->
             <template v-if="authStore.isAuthenticated">
                 <v-menu>
                     <template v-slot:activator="{ props }">
@@ -81,6 +91,25 @@
                         </v-list-item>
                     </v-list>
                 </v-menu>
+            </template>
+
+            <!-- Login and Register buttons when not authenticated -->
+            <template v-else>
+                <v-btn
+                    color="primary"
+                    to="/login"
+                    class="mr-2"
+                >
+                    <v-icon start>mdi-login</v-icon>
+                    Login
+                </v-btn>
+                <v-btn
+                    color="secondary"
+                    to="/register"
+                >
+                    <v-icon start>mdi-account-plus</v-icon>
+                    Register
+                </v-btn>
             </template>
         </v-app-bar>
 

@@ -4,6 +4,7 @@ import Login from '@/views/Login.vue'
 import Dashboard from '@/views/Dashboard.vue'
 import Register from '@/views/Register.vue'
 import { useAuthStore } from '@/stores/auth'
+import CounterpartyList from '@/views/CounterpartyList.vue'
 
 const routes = [
   { 
@@ -31,6 +32,12 @@ const routes = [
   {
     path: '/debug',
     component: () => import('@/views/SystemDebug.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/counterparties',
+    name: 'counterparties',
+    component: CounterpartyList,
     meta: { requiresAuth: true }
   }
 ]

@@ -6,7 +6,7 @@ import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import engine, Base
-from .routers import accounts, users, system
+from .routers import accounts, users, system, counterparties
 from .core.middleware import APILoggingMiddleware
 from .core.config import get_settings
 
@@ -40,6 +40,7 @@ app.add_middleware(APILoggingMiddleware)
 # Include routers
 app.include_router(users.router)
 app.include_router(accounts.router)
+app.include_router(counterparties.router)
 app.include_router(system.router)
 
 @app.on_event("startup")
