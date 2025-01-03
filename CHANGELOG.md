@@ -1,102 +1,42 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.3] - 2024-01-09
+## [0.2.0] - 2024-01-20
 
 ### Added
-- Account management functionality
-- New database schema for finance management
-- Account CRUD operations
-- Account list view in frontend
-- Account creation and edit forms
+- Counterparty management feature
+- Floating action buttons for better UX
+- Database schema documentation
+- Comprehensive seed data
+- Show/hide inactive items functionality
+- Register button in navigation
 
 ### Changed
-- Refactored backend into separate routers
-- Improved project structure
-- Updated token endpoint path
-- Enhanced system debug endpoint
-- Updated documentation
+- Consolidated database schema files
+- Improved navigation menu organization
+- Enhanced UI components styling
+- Updated API endpoints structure
+- Improved error handling
 
-### Technical
-- Added finance database schema and documentation
-- Added account models and schemas
-- Implemented account CRUD operations
-- Added frontend account components
-- Added account store and API service
+### Fixed
+- System debug endpoint path
+- Account list inactive switch functionality
+- Data table display issues
+- Login/Register button visibility
+- Database timestamp handling
 
-## [0.1.2] - 2024-01-09
-
-### Changed
-- Improved dashboard layout with grid system
-- Added frontend versions panel
-- Renamed versions panel to backend versions
-- Combined environment and logging into system configuration
-- Enhanced UI with elevated cards
-- Removed expandable panels for better visibility
-- Updated application title to "Runtime Information"
-
-## [0.1.1] - 2024-01-09
-
-### Changed
-- Synchronized version information between frontend and backend
-- Added application name and environment to frontend configuration
-- Improved configuration organization
-
-## [0.1.0] - 2024-01-09
+## [0.1.0] - 2024-01-10
 
 ### Added
-#### Backend
-- Initial backend setup with FastAPI
-- User management API endpoints (CRUD operations)
-- JWT-based authentication
-- Async PostgreSQL integration with SQLAlchemy
-- Environment-based configuration system
-- Comprehensive logging system with rotation
-- Health check endpoint
-- System debug endpoint
-- Swagger UI documentation
-- Password hashing with bcrypt
-- CORS middleware
-- Database connection testing
-
-#### Frontend
-- Vue 3 setup with TypeScript
-- Vuetify 3 UI components
-- Pinia state management
-- System debug dashboard
-- Real-time data fetching
-- Environment-aware configuration
-- Component-based architecture
-- Type-safe data handling
-- Proxy configuration for API
-- Responsive layout
-
-### Security
-- JWT token authentication
-- Password hashing with bcrypt
-- Environment-based configuration
-- Database credentials protection
-- CORS configuration
-- API proxy setup
-
-### Changed
-- Moved from sync to async database operations
-- Switched from psycopg2 to asyncpg
-- Implemented component-based frontend architecture
-- Added TypeScript for better type safety
-
-### Technical Debt
-- Need to add more comprehensive tests
-- Consider adding refresh tokens
-- Add rate limiting for authentication endpoints
-- Add request validation middleware
-- Consider adding API versioning
-- Add frontend unit tests
-- Implement error boundary components
-- Add loading state skeletons
-
-[0.1.1]: https://github.com/username/repository/releases/tag/v0.1.1
-[0.1.0]: https://github.com/username/repository/releases/tag/v0.1.0 
+- Initial release
+- User authentication
+- Account management
+- Basic dashboard
+- System monitoring
+- Database migrations
+- Frontend scaffolding
+- Basic documentation 
