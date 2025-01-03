@@ -47,6 +47,14 @@
                 </v-menu>
             </template>
 
+            <!-- App logo and title -->
+            <v-img
+                src="/assets/soba.png"
+                max-height="32"
+                max-width="32"
+                class="mr-2"
+                alt="Soba Logo"
+            ></v-img>
             <v-app-bar-title>Soba Finance</v-app-bar-title>
             
             <v-spacer></v-spacer>
