@@ -76,7 +76,8 @@ coverage/
 *.sqlite3
 *.db
 *.sql
-!backend/sql/*.sql
+!finance_db/schema/*.sql
+!finance_db/seed/*.sql
 
 # OS generated files
 .DS_Store
