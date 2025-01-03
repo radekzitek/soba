@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.3] - 2024-01-09
+
+### Added
+- Account management functionality
+- New database schema for finance management
+- Account CRUD operations
+- Account list view in frontend
+- Account creation and edit forms
+
+### Changed
+- Refactored backend into separate routers
+- Improved project structure
+- Updated token endpoint path
+- Enhanced system debug endpoint
+- Updated documentation
+
+### Technical
+- Added finance database schema and documentation
+- Added account models and schemas
+- Implemented account CRUD operations
+- Added frontend account components
+- Added account store and API service
+
 ## [0.1.2] - 2024-01-09
 
 ### Changed

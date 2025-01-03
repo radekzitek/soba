@@ -1,16 +1,14 @@
-# Soba - System Debug Dashboard
+# Soba - Family Finance Manager
 
-A full-stack application for system monitoring and debugging, built with FastAPI and Vue.js.
+A full-stack application for managing family finances, built with FastAPI and Vue.js.
 
 ## Features
-- Real-time system monitoring
 - User authentication and registration
+- Account management (bank accounts, credit cards, etc.)
 - Dark/Light theme support
-- Frontend and backend version tracking
-- Database connection monitoring
-- Environment configuration display
-- Logging system overview
-- Health checks
+- System monitoring and debugging
+- Multi-currency support
+- Real-time data updates
 
 ## Technology Stack
 ### Backend
@@ -27,52 +25,48 @@ A full-stack application for system monitoring and debugging, built with FastAPI
 - Axios for API communication
 - Vite for development and building
 
-## Directory Structure
+## Project Structure
 ```
 ├── backend/
 │   ├── app/
-│   │   ├── core/
-│   │   │   ├── config.py       # Application configuration
-│   │   │   ├── security.py     # Authentication utilities
-│   │   │   ├── deps.py         # Dependencies and middleware
-│   │   │   └── logging_config.py # Logging setup
-│   │   ├── models/            
-│   │   ├── schemas/
-│   │   └── crud/
-│   ├── logs/                   # Application logs
+│   │   ├── core/          # Core functionality
+│   │   ├── routers/       # API routes
+│   │   ├── models/        # Database models
+│   │   ├── schemas/       # Pydantic schemas
+│   │   └── crud/          # Database operations
 │   └── requirements.txt
 │
 ├── frontend/
 │   ├── src/
-│   │   ├── components/         # Vue components
-│   │   ├── views/             # Page components
-│   │   ├── stores/            # Pinia stores
-│   │   └── config/            # Frontend configuration
+│   │   ├── components/    # Vue components
+│   │   ├── views/         # Page components
+│   │   ├── stores/        # Pinia stores
+│   │   └── services/      # API services
 │   └── package.json
+│
+└── finance_db/            # Database schema and seeds
+    ├── schema/
+    └── seed/
 ```
 
-## Configuration
+## Features
+### Account Management
+- Create and manage multiple accounts
+- Track account balances
+- Support for different account types
+- Multi-currency support
+- Active/Inactive status tracking
 
-### Backend (.env)
-```ini
-VERSION=0.1.2
-DATABASE_USER=user
-DATABASE_PASSWORD=pass
-DATABASE_HOST=localhost
-DATABASE_PORT=5432
-DATABASE_NAME=dbname
-SECRET_KEY=your-secret-key
-ACCESS_TOKEN_EXPIRE_MINUTES=60
-ENVIRONMENT=development
-```
+### User Management
+- User registration and authentication
+- JWT-based security
+- User profile management
 
-### Frontend (.env)
-```ini
-VITE_APP_VERSION=0.1.2
-VITE_APP_NAME=Soba
-VITE_API_BASE_URL=/api
-VITE_APP_ENV=development
-```
+### System Features
+- Dark/Light theme
+- Real-time data updates
+- System monitoring
+- Comprehensive logging
 
 ## Setup and Running
 
@@ -117,43 +111,8 @@ npm run build
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
 
-## Key Endpoints
-- `/health` - Basic health check
-- `/debug/system` - Detailed system information
-- `/token` - User authentication
-- `/users/me` - Current user information
-- `/users/` - User management
-
-## Features
-### Authentication
-- JWT-based authentication
-- User registration and login
-- Secure password hashing
-- Protected routes
-
-### System Monitoring
-- Frontend versions display
-- Backend versions tracking
-- Database connection status
-- Environment configuration
-- Logging system overview
-
-### User Interface
-- Responsive grid layout
-- Dark/Light theme switching
-- Real-time data updates
-- User-friendly forms
-- Error handling
-
-## Logging
-All backend logs are written to `logs/app.log` with:
-- Automatic rotation at 1MB
-- Keeps 5 backup files
-- Comprehensive logging of:
-  - API requests and responses
-  - Database operations
-  - System events
-  - Authentication attempts
+## Database Schema
+See [finance_db/README.md](finance_db/README.md) for detailed database documentation.
 
 ## Contributing
 1. Fork the repository

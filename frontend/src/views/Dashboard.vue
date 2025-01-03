@@ -58,5 +58,5 @@
 </template>
 
 <script setup>
-import SystemDebug from '@/components/SystemDebug.vue'
+import SystemDebug from '@/views/SystemDebug.vue'
 </script> 

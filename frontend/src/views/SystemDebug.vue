@@ -128,6 +128,10 @@
 import { onMounted } from 'vue'
 import { useSystemStore } from '@/stores/system'
 import { config } from '@/config'
+import SystemInfoVersions from '@/components/system/SystemInfoVersions.vue'
+import SystemInfoDatabase from '@/components/system/SystemInfoDatabase.vue'
+import SystemInfoEnvironment from '@/components/system/SystemInfoEnvironment.vue'
+import SystemInfoLogging from '@/components/system/SystemInfoLogging.vue'
 
 const store = useSystemStore()
 

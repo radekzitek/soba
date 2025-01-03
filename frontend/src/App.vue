@@ -1,34 +1,81 @@
 <template>
     <v-app>
         <v-app-bar>
-            <v-app-bar-title>{{ config.app.name }}</v-app-bar-title>
-            <v-spacer></v-spacer>
-            <v-btn icon @click="themeStore.toggleTheme(theme)" class="mr-2">
-                <v-icon>{{ themeStore.isDark ? 'mdi-weather-sunny' : 'mdi-weather-night' }}</v-icon>
-            </v-btn>
-            <template v-if="!authStore.isAuthenticated">
-                <v-btn
-                    prepend-icon="mdi-login"
-                    class="mr-2"
-                    @click="router.push('/login')"
-                >
-                    Login
-                </v-btn>
-                <v-btn
-                    color="primary"
-                    prepend-icon="mdi-account-plus"
-                    @click="router.push('/register')"
-                >
-                    Register
-                </v-btn>
+            <!-- Navigation menu - shown only when authenticated -->
+            <template v-if="authStore.isAuthenticated">
+                <v-menu>
+                    <template v-slot:activator="{ props }">
+                        <v-btn
+                            icon
+                            v-bind="props"
+                        >
+                            <v-icon>mdi-menu</v-icon>
+                        </v-btn>
+                    </template>
+
+                    <v-list>
+                        <v-list-item
+                            to="/dashboard"
+                            :active="route.path === '/dashboard'"
+                        >
+                            <template v-slot:prepend>
+                                <v-icon>mdi-view-dashboard</v-icon>
+                            </template>
+                            <v-list-item-title>Dashboard</v-list-item-title>
+                        </v-list-item>
+
+                        <v-list-item
+                            to="/accounts"
+                            :active="route.path === '/accounts'"
+                        >
+                            <template v-slot:prepend>
+                                <v-icon>mdi-bank</v-icon>
+                            </template>
+                            <v-list-item-title>Accounts</v-list-item-title>
+                        </v-list-item>
+
+                        <v-list-item
+                            to="/debug"
+                            :active="route.path === '/debug'"
+                        >
+                            <template v-slot:prepend>
+                                <v-icon>mdi-bug</v-icon>
+                            </template>
+                            <v-list-item-title>System Debug</v-list-item-title>
+                        </v-list-item>
+                    </v-list>
+                </v-menu>
             </template>
-            <template v-else>
-                <v-btn icon color="error" class="mr-2" @click="handleLogout">
-                    <v-icon>mdi-logout</v-icon>
-                </v-btn>
-                <span class="mr-4">{{ authStore.displayName }}</span>
+
+            <v-app-bar-title>Soba Finance</v-app-bar-title>
+            
+            <v-spacer></v-spacer>
+
+            <!-- User menu -->
+            <template v-if="authStore.isAuthenticated">
+                <v-menu>
+                    <template v-slot:activator="{ props }">
+                        <v-btn
+                            v-bind="props"
+                            text
+                        >
+                            {{ authStore.displayName }}
+                            <v-icon right>mdi-account-circle</v-icon>
+                        </v-btn>
+                    </template>
+
+                    <v-list>
+                        <v-list-item @click="handleLogout">
+                            <template v-slot:prepend>
+                                <v-icon>mdi-logout</v-icon>
+                            </template>
+                            <v-list-item-title>Logout</v-list-item-title>
+                        </v-list-item>
+                    </v-list>
+                </v-menu>
             </template>
         </v-app-bar>
+
         <v-main>
             <router-view></router-view>
         </v-main>
@@ -37,21 +84,14 @@
 
 <script setup>
 import { useAuthStore } from '@/stores/auth'
-import { useThemeStore } from '@/stores/theme'
-import { useTheme } from 'vuetify'
-import { useRouter } from 'vue-router'
-import { config } from '@/config'
+import { useRoute, useRouter } from 'vue-router'
 
 const authStore = useAuthStore()
-const themeStore = useThemeStore()
-const theme = useTheme()
+const route = useRoute()
 const router = useRouter()
-
-// Initialize theme
-themeStore.initTheme(theme)
 
 const handleLogout = () => {
     authStore.logout()
-    router.push('/')
+    router.push('/login')
 }
 </script>

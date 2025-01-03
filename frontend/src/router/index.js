@@ -27,6 +27,11 @@ const routes = [
     path: '/accounts',
     component: () => import('@/views/AccountList.vue'),
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/debug',
+    component: () => import('@/views/SystemDebug.vue'),
+    meta: { requiresAuth: true }
   }
 ]
 

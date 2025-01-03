@@ -15,7 +15,7 @@ class Account(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(100), nullable=False)
-    account_type = Column(Enum(AccountType), nullable=False)
+    account_type = Column(Enum(AccountType, name='account_type', create_type=False), nullable=False)
     initial_balance = Column(Numeric(12, 2), nullable=False, default=0)
     current_balance = Column(Numeric(12, 2), nullable=False, default=0)
     currency = Column(String(3), nullable=False, default="USD")
