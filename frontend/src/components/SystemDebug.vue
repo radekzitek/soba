@@ -1,11 +1,12 @@
 <template>
   <v-container>
-    <v-card class="mx-auto" max-width="1200">
+    <v-card class="mx-auto" max-width="1200" elevation="10">
       <!-- Header -->
       <v-card-title class="d-flex align-center text-h5">
         Runtime Information
         <v-spacer />
         <v-btn
+          elevation="10"
           icon
           @click="refreshData"
           :loading="store.loading"

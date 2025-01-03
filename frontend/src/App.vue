@@ -3,10 +3,26 @@
         <v-app-bar>
             <v-app-bar-title>{{ config.app.name }}</v-app-bar-title>
             <v-spacer></v-spacer>
-            <v-btn icon @click="themeStore.toggleTheme(theme)">
+            <v-btn icon @click="themeStore.toggleTheme(theme)" class="mr-2">
                 <v-icon>{{ themeStore.isDark ? 'mdi-weather-sunny' : 'mdi-weather-night' }}</v-icon>
             </v-btn>
-            <template v-if="authStore.isAuthenticated">
+            <template v-if="!authStore.isAuthenticated">
+                <v-btn
+                    prepend-icon="mdi-login"
+                    class="mr-2"
+                    @click="router.push('/login')"
+                >
+                    Login
+                </v-btn>
+                <v-btn
+                    color="primary"
+                    prepend-icon="mdi-account-plus"
+                    @click="router.push('/register')"
+                >
+                    Register
+                </v-btn>
+            </template>
+            <template v-else>
                 <v-btn icon color="error" class="mr-2" @click="handleLogout">
                     <v-icon>mdi-logout</v-icon>
                 </v-btn>

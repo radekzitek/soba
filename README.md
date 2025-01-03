@@ -164,4 +164,3 @@ All backend logs are written to `logs/app.log` with:
 
 ## Version History
 See [CHANGELOG.md](CHANGELOG.md) for version history.
-
